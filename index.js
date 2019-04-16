@@ -1,6 +1,8 @@
 const express = require("express");
 const cron = require("node-cron");
 
+require('dotenv').config()
+
 const tweet = require('./controllers/tweet.js')
 const getPoke = require('./controllers/poke')
 const _ = require('lodash')
@@ -21,6 +23,6 @@ var bot = function () {
 
 cron.schedule("0 * * * *", () => bot());
 
-app.listen(2000, () => {
-    console.log(`Server started on port 2000...`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server started on port ${process.env.PORT}...`);
 });
