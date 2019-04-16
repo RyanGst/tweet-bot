@@ -1,7 +1,12 @@
+const express = require("express");
+const cron = require("node-cron");
+
 const tweet = require('./controllers/tweet.js')
 const getPoke = require('./controllers/poke')
 const _ = require('lodash')
 
+
+const app = express()
 
 var bot = function () {
     getPoke().then(res => {        
@@ -12,7 +17,10 @@ var bot = function () {
         tweet(text)
         
     })
-    setTimeout(bot, 600000);
 }
 
-bot();
+cron.schedule("0 * * * *", () => bot());
+
+app.listen(2000, () => {
+    console.log(`Server started on port 2000...`);
+});
