@@ -1,17 +1,55 @@
-var twit = require('twit');
-var config = require('../config/config.js');
+const twit = require('twit');
+const config = require('../config/config.js');
+const T = new twit(config);
+const request = require('request').defaults({ encoding: null });
+const fs = require('fs')
+const path = require('path')
 
-var T = new twit(config);
+var tweet = function(text, img, alt) {
 
-var tweet = function (data) {
-    T.post('statuses/update', { status: data }, function(err, data) {
-        if (err) {
-          console.log(err);
-          
-          process.exit()
-        } 
-        console.log('Tweet feito com sucesso em: ' + data.created_at);
-      })
-} 
+    const tweetObj = {
+        video_link: img,
+        content: text,
+    };
+
+    const localname = `tempVideo-${Date.now()}`;
+    const PATH = path.join(
+        __dirname,
+        `../folder/${localname}`
+    );
+    const mediaUrl = tweetObj.video_link;
+
+    request.get(mediaUrl, function(error, response, body) {
+
+        fs.writeFile(PATH, body, function(error) {
+
+            T.postMediaChunked({ file_path: PATH }, function(err, data, response) {
+
+                const mediaIdStr = data.media_id_string;
+                const meta_params = { media_id: mediaIdStr, alt_text: { text: alt } };
+
+                T.post('media/metadata/create', meta_params, function(err, data, response) {
+
+                    if (!err) {
+
+                        const params = { status: tweetObj.content, media_ids: [mediaIdStr] };
+
+                        T.post('statuses/update', params, function(err, tweet, response) {
+
+                            console.log('Novo tweet as: ' + tweet.created_at);
+                            fs.unlinkSync(PATH);
+
+                        });
+
+                    } // end if(!err)
+
+                });
+
+            });
+
+        });
+
+    });
+}
 
 module.exports = tweet
