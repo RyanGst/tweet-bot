@@ -8,7 +8,6 @@ const getPoke = require('./controllers/poke');
 const fav = require('./controllers/fav.js');
 const _ = require('lodash')
 
-
 const app = express()
 
 var bot = function() {
@@ -20,9 +19,9 @@ var bot = function() {
     })
 }
 
-
-fav()
 cron.schedule("0 * * * *", () => bot());
+
+cron.schedule("* * * * *", () => fav());
 
 app.listen(process.env.PORT, () => {
     console.log(`Server started on port ${process.env.PORT}...`);

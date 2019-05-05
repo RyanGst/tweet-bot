@@ -8,16 +8,16 @@ const path = require('path')
 var tweet = function(text, img, alt) {
 
     const tweetObj = {
-        video_link: img,
+        img_link: img,
         content: text,
     };
 
-    const localname = `tempVideo-${Date.now()}`;
+    const localname = `tempIMG-${Date.now()}.png`;
     const PATH = path.join(
         __dirname,
         `../folder/${localname}`
     );
-    const mediaUrl = tweetObj.video_link;
+    const mediaUrl = tweetObj.img_link;
 
     request.get(mediaUrl, function(error, response, body) {
 
