@@ -10,7 +10,10 @@ async function getPoke() {
     const q = randomNumber(1, 804)
     
     const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${q}/`)
-    return res.data
+    const poke = res.data
+    const text = `Name: ${poke.name}, \nID: #${poke.id}, Heigth: ${poke.height / 10}m, Weigth: ${poke.weight / 10}kg #Pokemon #${poke.name}`;
+
+    return text
 }
 
 module.exports = getPoke;

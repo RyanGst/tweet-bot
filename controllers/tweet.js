@@ -1,55 +1,35 @@
 const twit = require('twit');
 const config = require('../config/config.js');
 const T = new twit(config);
-const request = require('request').defaults({ encoding: null });
-const fs = require('fs')
-const path = require('path')
 
-var tweet = function(text, img, alt) {
 
-    const tweetObj = {
-        img_link: img,
-        content: text,
-    };
+var tweet = function (text, alt) {
 
-    const localname = `tempIMG-${Date.now()}.png`;
-    const PATH = path.join(
-        __dirname,
-        `../folder/${localname}`
-    );
-    const mediaUrl = tweetObj.img_link;
+    T.postMediaChunked({ file_path: './folder/download.png' }, function (err, data) {
 
-    request.get(mediaUrl, function(error, response, body) {
+        const mediaIdStr = data.media_id_string;
+        const meta_params = { media_id: mediaIdStr, alt_text: { text: alt } };
 
-        fs.writeFile(PATH, body, function(error) {
+        T.post('media/metadata/create', meta_params, function (err) {
 
-            T.postMediaChunked({ file_path: PATH }, function(err, data, response) {
+            if (!err) {
 
-                const mediaIdStr = data.media_id_string;
-                const meta_params = { media_id: mediaIdStr, alt_text: { text: alt } };
+                const params = { status: text, media_ids: [mediaIdStr] };
 
-                T.post('media/metadata/create', meta_params, function(err, data, response) {
+                T.post('statuses/update', params, function (err, tweet) {
 
-                    if (!err) {
-
-                        const params = { status: tweetObj.content, media_ids: [mediaIdStr] };
-
-                        T.post('statuses/update', params, function(err, tweet, response) {
-
-                            console.log('Novo tweet as: ' + tweet.created_at);
-                            fs.unlinkSync(PATH);
-
-                        });
-
-                    } // end if(!err)
-
+                    console.log('Novo tweet as: ' + tweet.created_at);
                 });
 
-            });
+            } else {
+                console.error(err);
+            }
 
         });
 
+
     });
+
 }
 
 module.exports = tweet

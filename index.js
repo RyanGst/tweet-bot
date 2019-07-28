@@ -3,25 +3,21 @@ const cron = require("node-cron");
 
 require('dotenv').config()
 
-const tweet = require('./controllers/tweet.js');
-const getPoke = require('./controllers/poke');
-const fav = require('./controllers/fav.js');
-const _ = require('lodash')
-
 const app = express()
 
-var bot = function() {
-    getPoke().then(res => {
-        var name = _.capitalize(res.name)
-        const text = `Name: ${name}, ID: #${res.id}, Heigth: ${res.height / 10}m, Weigth: ${res.weight / 10}kg #Pokemon #${name}`
-        const image = res.sprites.front_default
-        tweet(text, image, "#Pokemon")
-    })
+let robots = {
+    pokeData: require('./controllers/poke'), 
+    favoriteTweet: require('./controllers/fav.js'),
+    tweetPost: require('./controllers/tweet.js')
 }
 
-cron.schedule("0 * * * *", () => bot());
+let bot = async () => {
 
-cron.schedule("* * * * *", () => fav());
+    cron.schedule("* * * * *", () => robots.tweetPost('Estamos em manutenção', 'aa'));
+    cron.schedule("* * * * *", () => robots.favoriteTweet());
+}
+
+bot()
 
 app.listen(process.env.PORT, () => {
     console.log(`Server started on port ${process.env.PORT}...`);
