@@ -15,7 +15,6 @@ const fav = function () {
         lang: 'pt'
     }
     // https://dev.twitter.com/rest/reference/get/search/tweets
-
     T.get('search/tweets', params, function (err, data) {
 
         // find tweets

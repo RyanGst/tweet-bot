@@ -6,15 +6,28 @@ require('dotenv').config()
 const app = express()
 
 let robots = {
-    pokeData: require('./controllers/poke'), 
+    pokeData: require('./controllers/poke'),
+    imageDownloader: require('./controllers/image.js'),
+    tweetPost: require('./controllers/tweet.js'),
     favoriteTweet: require('./controllers/fav.js'),
-    tweetPost: require('./controllers/tweet.js')
 }
 
+
+
+async function generateContent() {
+
+    await robots.pokeData()
+
+    await robots.imageDownloader()
+
+    await robots.tweetPost()
+}
+
+generateContent()
 let bot = async () => {
 
-    cron.schedule("* * * * *", () => robots.tweetPost('Estamos em manutenção', 'aa'));
-    cron.schedule("* * * * *", () => robots.favoriteTweet());
+    // cron.schedule("* * * * *", () => robots.tweetPost('Estamos em manutenção', 'aa'));
+    // cron.schedule("* * * * *", () => robots.favoriteTweet());
 }
 
 bot()
