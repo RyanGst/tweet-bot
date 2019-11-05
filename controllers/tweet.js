@@ -10,14 +10,14 @@ const colors = require('colors');
 
 var tweet = function () {
 
-    console.log(`[Twitter post] > process starting... ${cool()}`.blue.bold);
-
     const poke = state.load()
+
+    console.log(`[Twitter post] > process starting... ${cool()}`.blue.bold);
 
     T.postMediaChunked({ file_path: `./content/${poke.name}.png` }, function (err, data) {
 
         const mediaIdStr = data.media_id_string;
-        const meta_params = { media_id: mediaIdStr, alt_text: { text: poke.id } };
+        const meta_params = { media_id: mediaIdStr, alt_text: { text: 'Pkmn_alt' } };
 
         T.post('media/metadata/create', meta_params, function (err) {
 

@@ -23,11 +23,10 @@ async function generateContent() {
     await robots.tweetPost()
 }
 
-generateContent()
-let bot = async () => {
 
-    // cron.schedule("* * * * *", () => robots.tweetPost('Estamos em manutenção', 'aa'));
-    // cron.schedule("* * * * *", () => robots.favoriteTweet());
+let bot = async () => {
+    cron.schedule("* * * * *", () => generateContent());
+    cron.schedule("* * * * *", () => robots.favoriteTweet());
 }
 
 bot()

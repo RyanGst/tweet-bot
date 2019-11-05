@@ -7,3 +7,5 @@ app.yaml
 .env
 
 ./config/google-search.json
+
+/content
